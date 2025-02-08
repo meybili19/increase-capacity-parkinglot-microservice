@@ -18,8 +18,8 @@ jobs:
 
       - name: Construir y subir imagen a Docker Hub
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/disminuye_capacity_parkinglot_image:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/disminuye_capacity_parkinglot_image:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/increase_capacity_parkinglot_image:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/increase_capacity_parkinglot_image:latest
 
       - name: Conectar a AWS EC2 y desplegar
         uses: appleboy/ssh-action@master
@@ -31,10 +31,10 @@ jobs:
             echo "🚀 Iniciando despliegue en AWS EC2..."
 
             # Detener y eliminar el contenedor si ya existe
-            if sudo docker ps -a --format '{{.Names}}' | grep -q disminuye_capacity_parkinglot_container; then
+            if sudo docker ps -a --format '{{.Names}}' | grep -q increase_capacity_parkinglot_container; then
               echo "🛑 Deteniendo y eliminando contenedor existente..."
-              sudo docker stop disminuye_capacity_parkinglot_container
-              sudo docker rm disminuye_capacity_parkinglot_container
+              sudo docker stop increase_capacity_parkinglot_container
+              sudo docker rm increase_capacity_parkinglot_container
             fi
 
             # Remover imágenes antiguas para evitar acumulación
@@ -43,11 +43,11 @@ jobs:
 
             # Descargar la última versión de la imagen desde Docker Hub
             echo "📥 Descargando nueva imagen..."
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/disminuye_capacity_parkinglot_image:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/increase_capacity_parkinglot_image:latest
 
             # Ejecutar el nuevo contenedor con las variables de entorno
             echo "🚀 Ejecutando nuevo contenedor..."
-            sudo docker run -d --name disminuye_capacity_parkinglot_container \
+            sudo docker run -d --name increase_capacity_parkinglot_container \
               --env PORT=${{ secrets.PORT }} \
               --env DB_HOST=${{ secrets.DB_HOST_M }} \
               --env DB_USER=${{ secrets.DB_USER_M }} \
@@ -56,6 +56,6 @@ jobs:
               --env PARKINGLOT_SERVICE_URL=${{ secrets.PARKINGLOT_SERVICE_URL_M }} \
               --env PARKINGLOT_SERVICE_CAPACITY_URL=${{ secrets.PARKINGLOT_SERVICE_CAPACITY_URL_M }} \
               -p 6006:6006 \
-              ${{ secrets.DOCKER_USERNAME }}/disminuye_capacity_parkinglot_image:latest
+              ${{ secrets.DOCKER_USERNAME }}/increase_capacity_parkinglot_image:latest
 
             echo "✅ Despliegue completado con éxito."

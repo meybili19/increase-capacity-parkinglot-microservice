@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use('/capacity', capacityRoutes);
 
-const PORT = process.env.PORT || 6006;
+const PORT = process.env.PORT || 6007;
 app.listen(PORT, () => {
-    console.log(`Disminuye Capacity server running on port ${PORT}`);
+    console.log(`Increase Capacity server running on port ${PORT}`);
 });
