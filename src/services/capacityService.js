@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db');
 const axios = require('axios');
 const dotenv = require('dotenv');
 
@@ -8,8 +8,7 @@ async function checkParkingLotExists(parkingLotId) {
     try {
         const response = await axios.get(`${process.env.PARKINGLOT_SERVICE_URL}/${parkingLotId}`, { timeout: 3000 });
         return response.status === 200;
-    } catch (error) {
-        console.error('Error checking parking lot existence:', error);
+    } catch {
         return false;
     }
 }
@@ -17,22 +16,22 @@ async function checkParkingLotExists(parkingLotId) {
 async function checkParkingLotCapacity(parkingLotId) {
     try {
         const response = await axios.get(`${process.env.PARKINGLOT_SERVICE_CAPACITY_URL}/${parkingLotId}`, { timeout: 3000 });
-        return response.data.capacity >= 0;
-    } catch (error) {
-        console.error('Error checking parking lot capacity:', error);
-        return false;
+        return response.data || null;
+    } catch {
+        return null;
     }
 }
 
 async function increaseParkingLotCapacity(parkingLotId) {
     try {
-        const [rows] = await db.execute(
-            'UPDATE ParkingLot SET capacity = capacity + 1 WHERE id = ?',
+        // STEP 1: Only increase capacity if it's below total space
+        const [result] = await db.execute(
+            'UPDATE ParkingLot SET capacity = capacity + 1 WHERE id = ? AND capacity < total_space',
             [parkingLotId]
         );
-        return rows.affectedRows > 0;
-    } catch (error) {
-        console.error('Error increasing capacity:', error);
+
+        return result.affectedRows > 0;
+    } catch {
         return false;
     }
 }
