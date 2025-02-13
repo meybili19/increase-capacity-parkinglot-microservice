@@ -55,7 +55,7 @@ jobs:
               --env DB_NAME=${{ secrets.DB_NAME_M }} \
               --env PARKINGLOT_SERVICE_URL=${{ secrets.PARKINGLOT_SERVICE_URL_M }} \
               --env PARKINGLOT_SERVICE_CAPACITY_URL=${{ secrets.PARKINGLOT_SERVICE_CAPACITY_URL_M }} \
-              -p 6007:6007 \
+              -p 7008:7008 \
               ${{ secrets.DOCKER_USERNAME }}/increase_capacity_parkinglot_image:latest
 
             echo "✅ Despliegue completado con éxito."
